@@ -1,0 +1,171 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Records Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .search-container {
+            background-color: #f9f9f9;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        input,
+        button {
+            margin: 5px 0;
+        }
+
+        .search-box {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .search-box>div {
+            flex-basis: calc(50% - 20px);
+            padding: 10px;
+        }
+
+        .search-results {
+            background-color: #ffffe0;
+            padding: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ddd;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div class="search-container">
+            <form @submit.prevent="searchRecords">
+                <div class="search-box">
+                    <div>
+                        <label for="patientID">PatientID</label>
+                        <input type="text" id="patientID" v-model="searchParams.patientID" placeholder="PatientID">
+                    </div>
+                    <div>
+                        <label for="patientName">PatientName</label>
+                        <input type="text" id="patientName" v-model="searchParams.patientName" placeholder="PatientName">
+                    </div>
+                    <div>
+                        <label for="fromDate">StudyDate From</label>
+                        <input type="date" id="fromDate" v-model="searchParams.fromDate">
+                    </div>
+                    <div>
+                        <label for="toDate">StudyDate To</label>
+                        <input type="date" id="toDate" v-model="searchParams.toDate">
+                    </div>
+                    <div>
+                        <label for="modality">Modality</label>
+                        <input type="text" id="modality" v-model="searchParams.modality" placeholder="Modality">
+                    </div>
+                    <div>
+                        <label for="identifier">Identifier</label>
+                        <input type="text" id="identifier" v-model="searchParams.identifier" placeholder="Identifier">
+                    </div>
+                    <div>
+                        <button type="submit">Search</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="search-results">
+            <table>
+                <thead>
+                    <tr>
+                        <th>PatientID</th>
+                        <th>PatientName</th>
+                        <th>StudyDate</th>
+                        <th>Identifier</th>
+                        <th>Operate</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="record in searchResults" :key="record.id">
+                        <td>{{ record.patientID }}</td>
+                        <td>{{ record.patientName }}</td>
+                        <td>{{ record.studyDate }}</td>
+                        <td>{{ record.identifier }}</td>
+                        <td>
+                            <!-- Operate button -->
+                            <button @click="operate(record.id)">Operate</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                searchParams: {
+                    patientID: '',
+                    patientName: '',
+                    fromDate: '',
+                    toDate: '',
+                    modality: '',
+                    identifier: ''
+                },
+                searchResults: []
+            },
+            methods: {
+                searchRecords() {
+                    // Perform API call to search records using Axios
+                    axios.post('/api/search', this.searchParams)
+                        .then(response => {
+                            this.searchResults = response.data;
+                        })
+                        .catch(error => {
+                            console.error('Error searching records:', error);
+                        });
+                },
+                operate(recordId) {
+                    // Implement functionality for operating on a record
+                    console.log('Operating on record with ID:', recordId);
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
